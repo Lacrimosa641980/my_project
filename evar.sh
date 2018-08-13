@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# my script for git exercises
 limit_time=9
 time_int=3
 
