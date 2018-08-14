@@ -1,4 +1,5 @@
 #!/bin/bash
+# I added a short comment, just to check things out
 
 var='test1   test2         test3'
 echo $var
