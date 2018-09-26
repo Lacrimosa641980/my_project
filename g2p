@@ -1,0 +1,32 @@
+#!/bin/bash
+
+filename='input.tsv'
+exec 4<$filename
+while read -u4 p ; do
+    echo $p
+done > output.tsv
+
+while read line ; do
+	set $line
+	echo $2
+	echo $3
+done <input.tsv > output2.tsv
+
+while IFS= read -r line; do # read input line by line
+  # Split line into fields and read into array.
+  IFS=, read -ra fields <<<"$line"
+  # Loop over fields from the back, down to the 2nd.
+  for (( i = ${#fields[@]} - 1; i >= 1; --i )); do
+    printf '%s ' "${fields[i]}"
+  done
+  # Print 1st field and complete line (append line).
+  printf '%s\n' "${fields[0]}"
+done < input.tsv > output.csv
+
+# a command to extract the 2nd column from the input.tsv file that contains phonemic transcriptions (an exemplary file from dictionary-updates repo, es-ES)
+# awk -F "\t" '{print $2}' input.tsv > output.tsv
+# a command to loop over columns in a file (-F is not needed, because the delimiter is whitespace)
+# awk '{out=""; for(i=1;i<=NF;i++){out=$out" "$i}; print $out}' output.tsv > output2.tsv
+# as above, but additionally does regex (gsub function)
+# awk '{out=""; for(i=1;i<=NF;i++){out=$out" "$i}{gsub ("ay", "aj")}{gsub ("ey", "ej")}{gsub ("iy", "i")}{gsub ("oy", "oj")}; print $out}' input > output
+awk '{out=""; for(i=1;i<=NF;i++){out=$out" "$i}{gsub ("ay", "aj")}{gsub ("ey", "ej")}{gsub (/ih|iy/, "i")}{gsub ("oy", "oj")}{gsub ("y", "j")}{gsub (/^tax/, "tu")}{gsub (/axt$/, "et")}{gsub (/ahn$/, "en")}{gsub (/ax|ae|ah/, "a")}{gsub (/ao|aa/, "o")}{gsub ("eh", "e")}{gsub (/uh|uw/,"u")}{gsub (/hv|hh/, "h")}{gsub ("jh", "zi")}{gsub ("v", "bh")}{gsub ("zh", "z")}{gsub ("nx", "n")}{gsub ("dh", "d")}; print $out}' input > output
